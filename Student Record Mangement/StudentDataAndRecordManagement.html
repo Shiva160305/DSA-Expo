@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Student Record Management System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg,#1f4037,#99f2c8);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 95%;
+            margin: auto;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 170px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #219150;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Student Record Management System</h1>
+
+<div class="container">
+
+    <h2>Add Student</h2>
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="gender" placeholder="Gender">
+    <input type="text" id="class" placeholder="Class">
+    <input type="text" id="section" placeholder="Section">
+    <input type="text" id="roll" placeholder="Roll No">
+    <input type="text" id="grade" placeholder="Grade">
+    <br><br>
+    <button onclick="addStudent()">Add Student</button>
+
+    <hr>
+
+    <h2>Search Student</h2>
+    <input type="text" id="search" placeholder="Search by Name" onkeyup="displayStudents()">
+
+    <h2>Student List</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Class</th>
+            <th>Section</th>
+            <th>Roll</th>
+            <th>Grade</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody id="studentTable">
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    function addStudent() {
+        let student = {
+            name: document.getElementById("name").value,
+            gender: document.getElementById("gender").value,
+            class: document.getElementById("class").value,
+            section: document.getElementById("section").value,
+            roll: document.getElementById("roll").value,
+            grade: document.getElementById("grade").value
+        };
+
+        if(student.name === "") {
+            alert("Please enter student name");
+            return;
+        }
+
+        students.push(student);
+        localStorage.setItem("students", JSON.stringify(students));
+        clearFields();
+        displayStudents();
+    }
+
+    function displayStudents() {
+        let search = document.getElementById("search").value.toLowerCase();
+        let table = document.getElementById("studentTable");
+        table.innerHTML = "";
+
+        students.forEach((student, index) => {
+            if(student.name.toLowerCase().includes(search)) {
+                table.innerHTML += `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.gender}</td>
+                        <td>${student.class}</td>
+                        <td>${student.section}</td>
+                        <td>${student.roll}</td>
+                        <td>${student.grade}</td>
+                        <td><span class="delete-btn" onclick="deleteStudent(${index})">Delete</span></td>
+                    </tr>
+                `;
+            }
+        });
+    }
+
+    function deleteStudent(index) {
+        if(confirm("Are you sure to delete this student?")) {
+            students.splice(index, 1);
+            localStorage.setItem("students", JSON.stringify(students));
+            displayStudents();
+        }
+    }
+
+    function clearFields() {
+        document.getElementById("name").value = "";
+        document.getElementById("gender").value = "";
+        document.getElementById("class").value = "";
+        document.getElementById("section").value = "";
+        document.getElementById("roll").value = "";
+        document.getElementById("grade").value = "";
+    }
+
+    displayStudents();
+
+</script>
+
+</body>
+</html>
